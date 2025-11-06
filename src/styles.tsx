@@ -38,14 +38,13 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginHorizontal: 10,
   },
-
   // === B. Grid and Meal Card Styles ===
   cardGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap', // Allows cards to wrap to the next line
     justifyContent: 'space-around', // Distributes cards horizontally
     paddingTop: 20,
-    paddingHorizontal: CARD_MARGIN,
+    paddingHorizontal: CARD_MARGIN - 5,
   },
   mealCard: {
     width: CARD_SIZE,
@@ -253,4 +252,42 @@ export const modalStyles = StyleSheet.create({
     backgroundColor: "#A3A3A3",
     marginTop: 5,
   }
+});
+
+export const logWeightStyles = StyleSheet.create({
+  weightScreenTitle: {
+    paddingHorizontal: 15,
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  weightInputField: {
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    marginTop: 15,
+    marginHorizontal: 15,
+    fontSize: 18,
+  },
+  logWeightButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    width: '40%',
+    alignSelf: 'center',
+    marginTop: 20,
+    color: 'black',
+    // backgroundColor: '#444',
+    padding: 10,
+    borderRadius: 5,
+    borderColor: '#000',
+    borderWidth: 1,
+    textAlign: 'center',
+  },
+  logWeightTrashButton: {
+    paddingRight: 30,
+  },
+  inputTitleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
 });

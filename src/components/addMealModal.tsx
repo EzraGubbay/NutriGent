@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react'
-import { modalStyles } from './styles'
+import { modalStyles } from '@styles'
 import { Modal, Text, View, Pressable, Animated, StyleSheet, TextInput, Button, Dimensions } from 'react-native';
 
 interface MealModalProps {

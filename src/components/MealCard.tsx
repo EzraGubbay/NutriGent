@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { styles } from './styles';
+import { styles } from '@styles';
 
 interface MealCardProps {
     label: string;

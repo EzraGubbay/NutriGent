@@ -1,34 +1,33 @@
-import React from 'react';
 import {
     View,
     Text,
     TouchableOpacity,
     ScrollView,
+    AppState,
 } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { styles } from './styles';
+import { styles } from '../styles';
 import { Feather, Ionicons } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
-import { MealCard } from './MealCard';
-import { AddMealModal } from './addMealModal';
+import { useEffect, useState, useRef } from 'react';
+import { MealCard } from '@components/MealCard';
+import { AddMealModal } from '@components/addMealModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation, ParamListBase } from '@react-navigation/native';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { useNavigation } from '@react-navigation/native';
+import {
+  DrawerNavProps,
+  getFormattedDateString,
+  getDayString,
+  loadMealData,
+  saveMealData,
+  initialMeals
+} from '@utils';
+import { MealCardGrid } from '@components/MealCardGrid';
 
 const STORAGE_KEY = '@meals_storage_key';
 
-type DrawerNavProps = DrawerNavigationProp<ParamListBase>;
-
-const initialMeals = [
-      { id: 'breakfast', label: 'Breakfast', content: '' },
-      { id: 'morningSnack', label: 'Morning Snack', content: '' },
-      { id: 'lunch', label: 'Lunch', content: '' },
-      { id: 'afternoonSnack', label: 'Afternoon Snack', content: '' },
-      { id: 'dinner', label: 'Dinner', content: '' },
-      { id: 'eveningSnack', label: 'Evening Snack', content: '' },
-  ]
-
 const HomeScreen = () => {
+
+  const lastKnownDayRef = useRef(getDayString(new Date()));
 
   // Navigation Menu
   const navigation = useNavigation<DrawerNavProps>();
@@ -51,6 +50,7 @@ const HomeScreen = () => {
   }
 
   const [mealsData, setMealsData] = useState(initialMeals);
+  const mealsDataRef = useRef(mealsData);
 
   const updateMealContent = (mealId: string, newContent: string) => {
     setMealsData((prevMeals: any) =>
@@ -62,9 +62,8 @@ const HomeScreen = () => {
     );
   };
 
-  // Load meal data on app start.
-  useEffect(() => {
-    const loadMeals = async () => {
+  // Function for loading meals or initial meal data.
+  const loadMeals = async () => {
       try {
         const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
         if (jsonValue !== null) {
@@ -80,7 +79,42 @@ const HomeScreen = () => {
       }
     };
 
+  // Load meal data on app start.
+  useEffect(() => {
+    console.log("Hello!")
     loadMeals();
+
+    // Set app state listener.
+    const listener = AppState.addEventListener('change', (nextState) => {
+      if (nextState === 'active') {
+
+        const newDay = getDayString(new Date());
+        const lastKnownDay = lastKnownDayRef.current;
+        console.log(`newDay: ${newDay}, lastKnownDay: ${lastKnownDay}`);
+
+        if (newDay !== lastKnownDay) {
+
+          // Confirm by logging that refresh logic is activated on date change.
+          console.log(`Day changed from ${lastKnownDay} to ${newDay}. Refreshing...`);
+          // ##############DEBUG
+
+          // Update last known day reference to today.
+          lastKnownDayRef.current = newDay;
+
+          const oldTodayMeals = mealsDataRef.current;
+          const saveKey = `${lastKnownDay}-mealData`;
+          saveMealData(saveKey, oldTodayMeals);
+          saveMealData(STORAGE_KEY, initialMeals);
+          loadMeals();
+        }
+      }
+    });
+
+    // Clean up AppState event listener
+    return () => {
+      listener.remove();
+    };
+    
   }, [])
 
   // Save changed meal data.
@@ -98,6 +132,8 @@ const HomeScreen = () => {
     if (mealsData.length > 0) {
       saveMeals();
     }
+
+    mealsDataRef.current = mealsData;
   }, [mealsData]);
 
   return (
@@ -108,7 +144,7 @@ const HomeScreen = () => {
           <Feather name="share-2" size={24} color="#888" />
           <View style={styles.dateContainer}>
             <Ionicons name="calendar-outline" size={20} color="#333" />
-            <Text style={styles.dateText}>29.10.2025</Text>
+            <Text style={styles.dateText}>{getFormattedDateString(new Date())}</Text>
             <Ionicons name="chevron-forward" size={20} color="#888" />
             <Ionicons name="chevron-back" size={20} color="#888" />
           </View>
@@ -117,15 +153,9 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.cardGrid}>
-          {mealsData.map((meal) => (
-                <MealCard
-                  key={meal.id}
-                  label={meal.label}
-                  content={meal.content}
-                  onPress={() => {openMealModal(meal)}}/>
-          ))}
-        </View>
+        <MealCardGrid
+          data={mealsData}
+        />
         
         <AddMealModal
             modalVisible={mealModalProps.modalVisible}
