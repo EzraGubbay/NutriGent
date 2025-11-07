@@ -1,28 +1,38 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { MealCard } from '@components/MealCard';
 import { styles } from '@styles';
-import { Meal, initialMeals } from '@utils';
-import { AddMealModal } from './addMealModal';
+import { Meal } from '@types';
+import { initialMeals } from '@constants';
+import { AddMealModal } from '@src/components/AddMealModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface MealCardGridProps {
-    data:
-    {
-        id: string;
-        label: string;
-        content: string;
-    }[];
+    storageKey: string;
 
 }
 
-export const MealCardGrid: React.FC<MealCardGridProps> = ({ data }) => {
+export const MealCardGrid: React.FC<MealCardGridProps> = ({ storageKey }) => {
 
-    // const toShow = data ? data : initialMeals;
-    const [ toShow, setToShow ] = useState(data ? data : initialMeals);
+    const [ data, setData ] = useState<Meal[]>(initialMeals);
+
+    useEffect(() => {
+        const loadMealData = async () => {
+            try {
+                const jsonValue = await AsyncStorage.getItem(storageKey);
+                if (jsonValue !== null) {
+                    setData(JSON.parse(jsonValue));
+                }
+            } catch(e) {
+                console.error(`Error loading saved meals with key: ${storageKey}. \nERRMSG: ${e}`);
+            }
+        loadMealData();
+    }}, []);
+
     const [ modalVisible, setModalVisible ] = useState(false);
     const [ editingMealId, setEditingMealId ] = useState('');
     const updateMealContent = (mealId: string, newContent: string) => {
-        setToShow((prevMeals: any) =>
+        setData((prevMeals: any) =>
             prevMeals.map((meal: any) =>
             meal.id === mealId
             ? {...meal, content: newContent}
@@ -39,7 +49,7 @@ export const MealCardGrid: React.FC<MealCardGridProps> = ({ data }) => {
     return (
         <>
             <View style={styles.cardGrid}>
-                {toShow.map((meal) => (
+                {data.map((meal) => (
                     <MealCard
                         key={meal.id}
                         label={meal.label}
@@ -51,8 +61,8 @@ export const MealCardGrid: React.FC<MealCardGridProps> = ({ data }) => {
             <AddMealModal
                 modalVisible={modalVisible}
                 setModalVisible={setModalVisible}
-                mealLabel={toShow.find(m => m.id === editingMealId)?.label || 'ERROR'}
-                initialText={toShow.find(m => m.id === editingMealId)?.content || ''}
+                mealLabel={data.find(m => m.id === editingMealId)?.label || 'ERROR'}
+                initialText={data.find(m => m.id === editingMealId)?.content || ''}
                 onClose={() => setModalVisible(false)}
                 onSave={(newContent: string) => {
                     updateMealContent(editingMealId, newContent);

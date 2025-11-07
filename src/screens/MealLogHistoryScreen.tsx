@@ -1,13 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { DrawerNavProps, initialMeals, MealDataCache } from '../utils';
+import { DrawerNavProps, MealDataCache } from '@types';
 import { styles } from "@styles";
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import { loadMealData, saveMealData, genDayPageKeyDates} from "@utils";
 import PagerView from 'react-native-pager-view';
-import { DayPage } from '@src/components/DayPage';
+import { DayPage } from '@components/DayPage';
 
 const RANGE_LIMIT = 31;
 
@@ -80,8 +80,7 @@ const MealLogHistoryScreen = () => {
                         {storageKeys.map((_, index) => (
                             <DayPage
                                 key={index}
-                                meals={loadedMeals[index]}
-                                formattedDate={dates[index]}
+                                date={dates[index]}
                             />
                         ))}
                     </PagerView>

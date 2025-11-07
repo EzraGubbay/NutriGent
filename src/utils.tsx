@@ -1,15 +1,10 @@
-import { ParamListBase } from '@react-navigation/native';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { MealCard } from './components/MealCard';
-import { styles } from './styles';
-import { View, Text, ScrollView } from 'react-native';
-import { MealCardGrid } from '@components/MealCardGrid';
-import { DayPage } from '@components/DayPage';
+import { Weight } from '@types';
+import { WEIGHT_STORAGE_KEY } from '@constants';
 
 // Date formatting.
 export const getFormattedDateString = (date: Date) => {
-    const day = date.getDate()
+    const day = date.getDate();
     const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
     const month = date.toLocaleDateString('en-US', { month: 'short' })
 
@@ -43,33 +38,6 @@ export const getFormattedYesterdayString = (yesterday: Date) => {
     return getFormattedDateString(yesterday);
 }
 
-// Shared values.
-export type DrawerNavProps = DrawerNavigationProp<ParamListBase>;
-
-export type Meal = {
-    id: string;
-    label: string;
-    content: string;
-}
-
-export type MealDataCache = Record<string, Meal[]>
-
-export type Weight = {
-    date: string;
-    weight: number;
-    waistCircumference?: number;
-    neckCircumference?: number;
-}
-
-export const initialMeals = [
-      { id: 'breakfast', label: 'Breakfast', content: '' },
-      { id: 'morningSnack', label: 'Morning Snack', content: '' },
-      { id: 'lunch', label: 'Lunch', content: '' },
-      { id: 'afternoonSnack', label: 'Afternoon Snack', content: '' },
-      { id: 'dinner', label: 'Dinner', content: '' },
-      { id: 'eveningSnack', label: 'Evening Snack', content: '' },
-]
-
 // Meal data file I/O.
 export const loadMealData = async (key: string) => {
     try {
@@ -80,7 +48,7 @@ export const loadMealData = async (key: string) => {
     } catch(e) {
       console.error(`Error loading saved meals with key: ${key}. \nERRMSG: ${e}`);
     }
-  }
+}
 
 export const saveMealData = async (
     key: string,
@@ -103,24 +71,47 @@ export const getMealStorageKey = (date: Date) => {
     return `@${getDayString(date)}`;
 }
 
+
+export const loadWeightData = async (setWeightData: any) => {
+    try {
+        const jsonValue = await AsyncStorage.getItem(WEIGHT_STORAGE_KEY);
+        if (jsonValue) {
+            const parsedData = JSON.parse(jsonValue);
+            // Convert date strings back to Date objects
+            const weightDataWithDates = parsedData.map((weight: any) => ({
+                ...weight,
+                date: new Date(weight.date)
+            }));
+            setWeightData(weightDataWithDates);
+        }
+        return [];
+    } catch(e) {
+        console.error(`Error loading weight data. \nKey: ${WEIGHT_STORAGE_KEY}. \nERRMSG: ${e}`);
+    }
+}
+
+export const saveWeightData = async (updatedWeightData: Weight[]) => {
+    try {
+        const jsonValue = JSON.stringify(updatedWeightData);
+        await AsyncStorage.setItem(WEIGHT_STORAGE_KEY, jsonValue);
+        console.log(`Saved weight data successfully: ${WEIGHT_STORAGE_KEY}`);
+    } catch(e) {
+        console.error(`Error saving weight data. \nKey: ${WEIGHT_STORAGE_KEY}. \nERRMSG: ${e}`);
+    }
+}
+
 export const genDayPageKeyDates = (drinkCount: number, updateDrinkCount: any, RANGE_LIMIT: number) => {
     const date = new Date();
     const storageKeys: string[] = Array.from(
         {
             length: RANGE_LIMIT,
         },
-        (_, index) => {
+        () => {
             const storageKey = getMealStorageKey(date);
             date.setDate(date.getDate() - 1);
             return storageKey;
         }
     );
-
-    const formattedDate = () => {
-        const dateString = getFormattedDateString(date);
-        date.setDate(date.getDate() - 1);
-        return dateString;
-    }
 
     // Add beginning and end storage keys to simulate carousel loop.
     const startKey = storageKeys[0];
@@ -130,14 +121,14 @@ export const genDayPageKeyDates = (drinkCount: number, updateDrinkCount: any, RA
 
     date.setDate(date.getDate() + RANGE_LIMIT);
 
-    const dates: string[] = Array.from(
+    const dates: Date[] = Array.from(
         {
             length: RANGE_LIMIT,
         },
         () => {
-            const dateString = getFormattedDateString(date);
+            const dateItem = date;
             date.setDate(date.getDate() - 1);
-            return dateString;
+            return dateItem;
         }
     );
 
@@ -150,4 +141,17 @@ export const genDayPageKeyDates = (drinkCount: number, updateDrinkCount: any, RA
         storageKeys,
         dates,
     }
+}
+
+export const BMI = (weight: number, height: number) => {
+    return weight / ((height / 100) ** 2);
+}
+
+export const bodyFatPercentage = (waist: number, neck: number, height: number, gender: string, hip?: number, ) => {
+    const c1 = gender === 'M' ? 1.0324 : 1.29579;
+    const c2 = gender === 'M' ? 0.19077 : 0.35004;
+    const c3 = gender === 'M' ? waist - neck : hip ? waist + hip - neck : null; // If null, user is Female but did not provide hip value.
+    const c4 = gender === 'M' ? 0.15456 : 0.221;
+
+    return 495 / (c1 - c2 * Math.log10(c3!) + c4 * Math.log10(height)) - 450;
 }

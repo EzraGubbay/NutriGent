@@ -276,7 +276,6 @@ export const logWeightStyles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 20,
     color: 'black',
-    // backgroundColor: '#444',
     padding: 10,
     borderRadius: 5,
     borderColor: '#000',
@@ -290,4 +289,55 @@ export const logWeightStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+  weightGraphTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginVertical: 25,
+  },
+  weightGraphContainer: {
+    height: 420,
+    width: "95%",
+    marginLeft: 15,
+    padding: 10,
+    marginBottom: 30,
+    marginRight: 20,
+  },
+  chartContainer: {
+    height: 400,
+    width: width - 30,
+    alignSelf: "center",
+  },
+  weightRecordText: {
+    fontSize: 18,
+    marginVertical: 10,
+  },
+  weightRecordTrash: {
+    fontSize: 24,
+    marginVertical: 10,
+  },
+  weightRecordsList: {
+    marginVertical: 40,
+    padding: 10,
+    marginHorizontal: 20,
+    justifyContent: 'space-between',
+  },
+  weightRecordSeparator: {
+    height: 1,
+    backgroundColor: "#C4C4C4",
+    alignSelf: "center",
+    width: width - 80,
+  },
+  weightRecordListHeader: {
+    fontSize: 16,
+    marginVertical: 10,
+    alignSelf: "center",
+    width: 55,
+    marginHorizontal: 5,
+  },
+  weightRecordListHeaderContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: width - 115,
+    marginLeft: 20,
+  }
 });

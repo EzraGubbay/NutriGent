@@ -10,18 +10,18 @@ import { styles } from '../styles';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { useEffect, useState, useRef } from 'react';
 import { MealCard } from '@components/MealCard';
-import { AddMealModal } from '@components/addMealModal';
+import { AddMealModal } from '@src/components/AddMealModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import {
-  DrawerNavProps,
   getFormattedDateString,
   getDayString,
   loadMealData,
   saveMealData,
-  initialMeals
 } from '@utils';
 import { MealCardGrid } from '@components/MealCardGrid';
+import { DrawerNavProps } from '@types';
+import { initialMeals } from '@constants';
 
 const STORAGE_KEY = '@meals_storage_key';
 
@@ -168,38 +168,6 @@ const HomeScreen = () => {
               setModalVisible(false);
             }}
         />
-
-        <View style={styles.footerContainer}>
-          <Text style={styles.footerText}>
-            You must drink 19 cups of 180ml in a day
-          </Text>
-          <Text style={styles.footerText}>
-            One more cup of water will bring you closer to your drinking goal
-          </Text>
-          <View style={styles.progressRow}>
-            <TouchableOpacity 
-                style={styles.minusButton}
-                onPress={() => {
-                    if (drinkCount > 0) {
-                        updateDrinkCount(drinkCount - 1);
-                    }
-            }}>
-              <Text style={styles.minusText}>-</Text>
-            </TouchableOpacity>
-            <View style={styles.progressPill}>
-              <Text style={styles.progressText}>{drinkCount}/19</Text>
-            </View>
-            <TouchableOpacity
-                style={styles.plusButton}
-                onPress={ () => {
-                    if (drinkCount < 19) {
-                        updateDrinkCount(drinkCount + 1);
-                    }
-            }}>
-              <Text style={styles.plusText}>+</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
       </View>
     </ScrollView>
     </SafeAreaProvider>
