@@ -126,7 +126,7 @@ export const genDayPageKeyDates = (drinkCount: number, updateDrinkCount: any, RA
             length: RANGE_LIMIT,
         },
         () => {
-            const dateItem = date;
+            const dateItem = new Date(date);
             date.setDate(date.getDate() - 1);
             return dateItem;
         }

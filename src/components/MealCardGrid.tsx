@@ -9,10 +9,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface MealCardGridProps {
     storageKey: string;
-
+    refreshToken?: number;
 }
 
-export const MealCardGrid: React.FC<MealCardGridProps> = ({ storageKey }) => {
+export const MealCardGrid: React.FC<MealCardGridProps> = ({ storageKey, refreshToken }) => {
 
     const [ data, setData ] = useState<Meal[]>(initialMeals);
 
@@ -22,23 +22,36 @@ export const MealCardGrid: React.FC<MealCardGridProps> = ({ storageKey }) => {
                 const jsonValue = await AsyncStorage.getItem(storageKey);
                 if (jsonValue !== null) {
                     setData(JSON.parse(jsonValue));
+                } else {
+                    setData(initialMeals);
                 }
             } catch(e) {
                 console.error(`Error loading saved meals with key: ${storageKey}. \nERRMSG: ${e}`);
             }
+        };
+
         loadMealData();
-    }}, []);
+    }, [storageKey, refreshToken]);
+
+    const saveMealData = async (updatedData: Meal[]) => {
+        try {
+            const jsonValue = JSON.stringify(updatedData);
+            await AsyncStorage.setItem(storageKey, jsonValue);
+        } catch(e) {
+            console.warn(e);
+        }
+    }
 
     const [ modalVisible, setModalVisible ] = useState(false);
     const [ editingMealId, setEditingMealId ] = useState('');
     const updateMealContent = (mealId: string, newContent: string) => {
-        setData((prevMeals: any) =>
-            prevMeals.map((meal: any) =>
-            meal.id === mealId
-            ? {...meal, content: newContent}
-            : meal
-            )
-        );
+        const updatedData: Meal[] =
+            data.map((meal) => (
+            meal.id === mealId ? {...meal, content: newContent} : meal
+        ));
+
+        setData(updatedData);
+        saveMealData(updatedData);
     };
 
     const openMealModal = (mealItem: Meal) => {

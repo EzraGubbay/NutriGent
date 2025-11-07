@@ -2,26 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { styles } from '@styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { DrinkData } from '@types';
 
 export interface DrinkTrackerProps {
     storageKey: string;
+    refreshToken?: number;
 }
 
-export const DrinkTracker: React.FC<DrinkTrackerProps> = ({ storageKey }) => {
+export const DrinkTracker: React.FC<DrinkTrackerProps> = ({ storageKey, refreshToken }) => {
 
-    /**
-     * TODO:
-     *      1. Change prop for MealCardGrid to receive string storageKey. DONE
-     *      2. Move data load and save management to MealCardGrid.
-     *      3. Replicate with DrinkTracker.
-     *      4. Create new parent component - DayPage to receive date and infer necessary storage key from that.
-     *          *** DayPage must be compatible with PagerView for MealLogHistoryScreen ***
-     *      5. Create new storageKey format to hold two storage keys - add load and save in DayPage.
-     *      6. Add DrinkTracker to DayPage.
-     *      7. Pass storage keys from DayPage to MealCardGrid and DrinkTracker.
-     */
-
-    const [ drinkCount, setDrinkCount ] = useState<number>(0);
+    const [ drinkCount, setDrinkCount ] = useState<DrinkData>({ value: 0 });
 
     // Load drink data
     useEffect(() => {
@@ -30,6 +20,8 @@ export const DrinkTracker: React.FC<DrinkTrackerProps> = ({ storageKey }) => {
                 const jsonValue = await AsyncStorage.getItem(storageKey);
                 if (jsonValue !== null) {
                     setDrinkCount(JSON.parse(jsonValue));
+                } else {
+                    setDrinkCount({ value: 0 });
                 }
             } catch(e) {
                 console.warn(e);
@@ -37,7 +29,24 @@ export const DrinkTracker: React.FC<DrinkTrackerProps> = ({ storageKey }) => {
         }
 
         loadDrinkData()
-    }, []);
+    }, [storageKey, refreshToken]);
+
+    const saveDrinkData = async (updatedDrinkCount: DrinkData) => {
+        try {
+            const jsonValue = JSON.stringify(updatedDrinkCount);
+            await AsyncStorage.setItem(storageKey, jsonValue);
+        } catch(e) {
+            console.warn(e);
+        }
+    }
+
+    const updateData = (value: number) => {
+        const updatedDrinkCount: DrinkData = {
+            value: value,
+        }
+        setDrinkCount(updatedDrinkCount);
+        saveDrinkData(updatedDrinkCount);
+    }
 
     return (
         <View style={styles.footerContainer}>
@@ -51,20 +60,20 @@ export const DrinkTracker: React.FC<DrinkTrackerProps> = ({ storageKey }) => {
         <TouchableOpacity 
             style={styles.minusButton}
             onPress={() => {
-                if (drinkCount > 0) {
-                    setDrinkCount(drinkCount - 1);
+                if (drinkCount.value > 0) {
+                    updateData(drinkCount.value - 1);
                 }
         }}>
             <Text style={styles.minusText}>-</Text>
         </TouchableOpacity>
         <View style={styles.progressPill}>
-            <Text style={styles.progressText}>{drinkCount}/19</Text>
+            <Text style={styles.progressText}>{drinkCount.value}/19</Text>
         </View>
         <TouchableOpacity
             style={styles.plusButton}
             onPress={ () => {
-                if (drinkCount < 19) {
-                    setDrinkCount(drinkCount + 1);
+                if (drinkCount.value < 19) {
+                    updateData(drinkCount.value + 1);
                 }
         }}>
             <Text style={styles.plusText}>+</Text>

@@ -12,6 +12,10 @@ export type Meal = {
 
 export type MealDataCache = Record<string, Meal[]>
 
+export type DrinkData = {
+    value: number;
+}
+
 export type Weight = {
     date: Date;
     day: number;

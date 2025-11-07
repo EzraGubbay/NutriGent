@@ -59,6 +59,12 @@ export const AddMealModal: React.FC<MealModalProps> = ({
         onSave(trimmed)
     }
 
+    const handleDelete = () => {
+        setMealInputContent('');
+        handleSave();
+        closeModal();
+    }
+
     // Stateful text variable for meal input
     const [mealInputContent, setMealInputContent] = useState('');
 
@@ -94,7 +100,10 @@ export const AddMealModal: React.FC<MealModalProps> = ({
                                         onChangeText={setMealInputContent}
                                     >{initialText}</TextInput>
                                     <View style={modalStyles.line} />
-                                    <Button title='Save' onPress={handleSave} />
+                                    <View style={modalStyles.actionRow}>
+                                        <Button title='Delete' color={"red"} onPress={handleDelete}/>
+                                        <Button title='Save' onPress={handleSave}/>
+                                    </View>
                                 </Pressable>
                             </View>
                         </View>

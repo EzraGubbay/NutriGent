@@ -8,11 +8,11 @@ import {
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { styles } from '../styles';
 import { Feather, Ionicons } from '@expo/vector-icons';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { MealCard } from '@components/MealCard';
 import { AddMealModal } from '@src/components/AddMealModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import {
   getFormattedDateString,
   getDayString,
@@ -22,6 +22,7 @@ import {
 import { MealCardGrid } from '@components/MealCardGrid';
 import { DrawerNavProps } from '@types';
 import { initialMeals } from '@constants';
+import { DayPage } from '@src/components/DayPage';
 
 const STORAGE_KEY = '@meals_storage_key';
 
@@ -36,6 +37,14 @@ const HomeScreen = () => {
   }
 
   const [ drinkCount, updateDrinkCount ] = useState<number>(0);
+  const [ dayPageRefreshToken, setDayPageRefreshToken ] = useState(0);
+  useFocusEffect(
+    useCallback(() => {
+      setDayPageRefreshToken((prev) => prev + 1);
+      return () => {};
+    }, [])
+  );
+
 
   const [ modalVisible, setModalVisible ] = useState(false);
   const mealModalProps = {
@@ -143,18 +152,20 @@ const HomeScreen = () => {
         <View style={styles.header}>
           <Feather name="share-2" size={24} color="#888" />
           <View style={styles.dateContainer}>
-            <Ionicons name="calendar-outline" size={20} color="#333" />
-            <Text style={styles.dateText}>{getFormattedDateString(new Date())}</Text>
-            <Ionicons name="chevron-forward" size={20} color="#888" />
-            <Ionicons name="chevron-back" size={20} color="#888" />
+            {/* <Ionicons name="calendar-outline" size={20} color="#333" /> */}
+            <Text style={styles.dateText}>Home</Text>
+            {/* <Ionicons name="chevron-forward" size={20} color="#888" /> */}
+            {/* <Ionicons name="chevron-back" size={20} color="#888" /> */}
           </View>
           <TouchableOpacity onPress={toggleDrawer} >
             <Feather name="menu" size={28} color="#333" />
           </TouchableOpacity>
         </View>
 
-        <MealCardGrid
-          data={mealsData}
+        <DayPage
+          key={`home-daypage-${dayPageRefreshToken}`}
+          date={new Date()}
+          refreshToken={dayPageRefreshToken}
         />
         
         <AddMealModal

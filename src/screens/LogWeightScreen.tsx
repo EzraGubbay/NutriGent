@@ -9,7 +9,7 @@ import React, { useState, useEffect } from "react";
 import { Alert } from "react-native";
 import { CartesianChart, Line, useChartPressState } from 'victory-native';
 import { Circle, useFont, Text as SKText, matchFont } from '@shopify/react-native-skia';
-import { SharedValue, useDerivedValue } from "react-native-reanimated";
+import { useDerivedValue } from "react-native-reanimated";
 import { WeightRecord } from "@components/WeightRecord";
 
 const LogWeightScreen = () => {
@@ -159,7 +159,7 @@ const LogWeightScreen = () => {
                         </Text>
                     </TouchableOpacity>
 
-                    {weightData.length !== 0 ? (
+                    {weightData.length !== 0 && font ? (
                     <>
                      {/* Weight Cartesian Chart */}
                      <View style={logWeightStyles.weightGraphContainer}>
@@ -195,7 +195,6 @@ const LogWeightScreen = () => {
                                         points={points.weight}
                                         color="#007AFF"
                                         strokeWidth={3}
-                                        animate={{ type: "timing", duration: 500 }}
                                         curveType="natural"
                                     />
                                     {isActive && (
@@ -248,13 +247,3 @@ const LogWeightScreen = () => {
 }
 
 export default LogWeightScreen;
-
-const ToolTip = ({
-    x,
-    y,
-}: {
-    x: SharedValue<number>,
-    y: SharedValue<number>,
-}) => {
-    return <Circle r={8} cx={x} cy={y} color={"gray"} opacity={0.8} />;
-};

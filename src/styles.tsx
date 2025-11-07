@@ -251,6 +251,10 @@ export const modalStyles = StyleSheet.create({
     height: 2,
     backgroundColor: "#A3A3A3",
     marginTop: 5,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   }
 });
 

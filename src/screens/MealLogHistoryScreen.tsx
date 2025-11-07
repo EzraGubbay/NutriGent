@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useCallback } from 'react';
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { DrawerNavProps, MealDataCache } from '@types';
 import { styles } from "@styles";
@@ -21,6 +21,7 @@ const MealLogHistoryScreen = () => {
 
     const [ drinkCount, updateDrinkCount ] = useState<number>(0);
     const [ loadedMeals, setLoadedMeals ] = useState<MealDataCache>({});
+    const [ dayPageRefreshToken, setDayPageRefreshToken ] = useState(0);
 
     const { storageKeys, dates } = genDayPageKeyDates(drinkCount, updateDrinkCount, RANGE_LIMIT);
     const pageRef = useRef<PagerView>(null);
@@ -49,7 +50,8 @@ const MealLogHistoryScreen = () => {
     }
 
     useFocusEffect((
-        React.useCallback(() => {
+        useCallback(() => {
+            setDayPageRefreshToken((prev) => prev + 1);
             return () => {
                 pageRef.current?.setPageWithoutAnimation(2);
                 setCurrentPage(2);
@@ -77,10 +79,11 @@ const MealLogHistoryScreen = () => {
                         ref={pageRef}
                         onPageSelected={onPageSelected}
                     >
-                        {storageKeys.map((_, index) => (
+                        {storageKeys.map((value, index) => (
                             <DayPage
-                                key={index}
+                                key={`${value}-${index}-${dayPageRefreshToken}`}
                                 date={dates[index]}
+                                refreshToken={dayPageRefreshToken}
                             />
                         ))}
                     </PagerView>
