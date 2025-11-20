@@ -8,6 +8,8 @@ import { registerForPushNotificationsAsync } from './notificationHandler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import DrawerContent from './src/DrawerContent'
+import SettingsScreen from '@src/screens/SettingsScreen';
+import StepScreen from '@screens/StepScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -31,18 +33,23 @@ const RootNavigator = () => {
         <Drawer.Screen
           name="Home"
           component={HomeScreen}
-        >
-        </Drawer.Screen>
+        />
         <Drawer.Screen
           name="LogWeight"
           component={LogWeightScreen}
-        >
-        </Drawer.Screen>
+        />
         <Drawer.Screen
           name="MealLogHistory"
           component={MealLogHistoryScreen}
-        >
-        </Drawer.Screen>
+        />
+        <Drawer.Screen
+          name="SettingsScreen"
+          component={SettingsScreen}
+        />
+        <Drawer.Screen
+          name="StepScreen"
+          component={StepScreen}
+        />
       </Drawer.Navigator>
     </NavigationContainer>
   );

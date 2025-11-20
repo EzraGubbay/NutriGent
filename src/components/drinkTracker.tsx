@@ -67,7 +67,8 @@ export const DrinkTracker: React.FC<DrinkTrackerProps> = ({ storageKey, refreshT
             <Text style={styles.minusText}>-</Text>
         </TouchableOpacity>
         <View style={styles.progressPill}>
-            <Text style={styles.progressText}>{drinkCount.value}/19</Text>
+            <View style={[styles.filler, { width: `${(drinkCount.value / 19) * 100}%`}]} />
+                <Text style={styles.progressText}>{drinkCount.value}/19</Text>
         </View>
         <TouchableOpacity
             style={styles.plusButton}

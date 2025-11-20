@@ -22,13 +22,18 @@ const DrawerContent: React.FC<DrawerContentComponentProps> = (props) => (
         <DrawerItem 
           style={styles.header}
           label="Settings"
-          onPress={() => {console.log("No Settings page yet...")}}
+          onPress={() => {props.navigation.navigate('SettingsScreen')}}
         />
         <DrawerItem 
           style={styles.header}
           label="Logout"
           onPress={() => {console.log("No Logout functionality yet...")}}
         />
+        <DrawerItem
+          style={styles.header}
+          label="Steps"
+          onPress={() => {props.navigation.navigate('StepScreen')}}
+          />
 
     </DrawerContentScrollView>
 );

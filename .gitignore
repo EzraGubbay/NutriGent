@@ -39,3 +39,8 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# backups and stuff
+dep_check_script.sh
+fixed_package_json.json
+package.json.backup

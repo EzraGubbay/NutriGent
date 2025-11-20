@@ -14,12 +14,9 @@ import { AddMealModal } from '@src/components/AddMealModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import {
-  getFormattedDateString,
   getDayString,
-  loadMealData,
   saveMealData,
 } from '@utils';
-import { MealCardGrid } from '@components/MealCardGrid';
 import { DrawerNavProps } from '@types';
 import { initialMeals } from '@constants';
 import { DayPage } from '@src/components/DayPage';

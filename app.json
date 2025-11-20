@@ -17,7 +17,8 @@
       "bundleIdentifier": "com.anonymous.NutriGent",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
-      }
+      },
+      "deploymentTarget": "16.0"
     },
     "android": {
       "adaptiveIcon": {
@@ -36,6 +37,9 @@
         "projectId": "49d1f9ac-604c-4d59-8650-326ae0c7411f"
       }
     },
-    "plugins": ["expo-notifications"]
+    "plugins": [
+      "expo-notifications",
+      "react-native-health"
+    ]
   }
 }

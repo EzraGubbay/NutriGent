@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 import { modalStyles } from '@styles'
-import { Modal, Text, View, Pressable, Animated, StyleSheet, TextInput, Button, Dimensions } from 'react-native';
+import { Keyboard, Modal, Text, View, Pressable, Animated, StyleSheet, TextInput, Button, Dimensions, TouchableOpacity } from 'react-native';
 
 interface MealModalProps {
     modalVisible: boolean;
@@ -51,15 +51,18 @@ export const AddMealModal: React.FC<MealModalProps> = ({
     })
 
     const closeModal = () => {
+        Keyboard.dismiss();
         setModalVisible(false);
     }
 
     const handleSave = () => {
+        Keyboard.dismiss();
         const trimmed = mealInputContent.trim()
         onSave(trimmed)
     }
 
     const handleDelete = () => {
+        Keyboard.dismiss();
         setMealInputContent('');
         handleSave();
         closeModal();
@@ -101,8 +104,16 @@ export const AddMealModal: React.FC<MealModalProps> = ({
                                     >{initialText}</TextInput>
                                     <View style={modalStyles.line} />
                                     <View style={modalStyles.actionRow}>
-                                        <Button title='Delete' color={"red"} onPress={handleDelete}/>
-                                        <Button title='Save' onPress={handleSave}/>
+                                        <TouchableOpacity style={modalStyles.actionButton} onPress={handleDelete}>
+                                            <Text style={[modalStyles.actionButtonLabel, { color: "red" }]}>
+                                                Delete
+                                            </Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={modalStyles.actionButton} onPress={handleSave}>
+                                            <Text style={[modalStyles.actionButtonLabel]}>
+                                                Save
+                                            </Text>
+                                        </TouchableOpacity>
                                     </View>
                                 </Pressable>
                             </View>

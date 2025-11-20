@@ -28,3 +28,11 @@ export type DailyData = {
     mealDataStorageKey: string;
     drinkDataStorageKey: string;
 }
+
+export type UserSettings = {
+    name: string;
+    gender: 'M' | 'F' | '';
+    height: number;
+    darkMode: boolean;
+    notificationSchedule: null;
+}

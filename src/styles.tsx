@@ -166,9 +166,19 @@ export const styles = StyleSheet.create({
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: "hidden",
+  },
+  filler: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "#388E3C",
+    borderRadius: 15,
   },
   progressText: {
-    color: '#388E3C',
+    color: '#333',
     fontWeight: 'bold',
   },
   mealContentContainer: {
@@ -255,7 +265,19 @@ export const modalStyles = StyleSheet.create({
   actionRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-  }
+    width: "80%",
+  },
+  actionButton: {
+    flex: 1,
+    height: 20,
+    width: 30,
+    marginLeft: 30,
+    marginTop: 20,
+  },
+  actionButtonLabel: {
+    fontSize: 18,
+    fontWeight: 500,
+  },
 });
 
 export const logWeightStyles = StyleSheet.create({
