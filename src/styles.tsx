@@ -8,7 +8,7 @@ const CARD_SIZE = (width - GRID_PADDING - 2 * CARD_MARGIN) / 2;
 export const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f0f0f5', // Light background for the overall screen
+    backgroundColor: '#f2f2f7', // Light background for the overall screen
     paddingVertical: 40,
   },
   container: {
@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 15,
     borderBottomWidth: 1, // Subtle line under the header
-    borderBottomColor: '#eee',
+    borderBottomColor: '#eeeeee',
   },
   dateContainer: {
     flexDirection: 'row',
@@ -259,7 +259,7 @@ export const modalStyles = StyleSheet.create({
   },
   line: {
     height: 2,
-    backgroundColor: "#A3A3A3",
+    backgroundColor: "#ddd",
     marginTop: 5,
   },
   actionRow: {
@@ -289,7 +289,7 @@ export const logWeightStyles = StyleSheet.create({
   weightInputField: {
     padding: 20,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#dddddd',
     borderRadius: 5,
     marginTop: 15,
     marginHorizontal: 15,
@@ -349,7 +349,7 @@ export const logWeightStyles = StyleSheet.create({
   },
   weightRecordSeparator: {
     height: 1,
-    backgroundColor: "#C4C4C4",
+    backgroundColor: "#dddddd",
     alignSelf: "center",
     width: width - 80,
   },
@@ -366,4 +366,48 @@ export const logWeightStyles = StyleSheet.create({
     width: width - 115,
     marginLeft: 20,
   }
+});
+
+export const settingsStyles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#f0f0f5', // Light background for the overall screen
+    paddingVertical: 40,
+  },
+  container: {
+    flex: 1,
+    paddingHorizontal: CARD_MARGIN,
+    // Note: The vertical lines on the side suggest a repeated background image or texture
+    // which cannot be done with simple background color.
+  },
+
+  // === A. Header Styles ===
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    borderBottomWidth: 1, // Subtle line under the header
+    borderBottomColor: '#eee',
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  settingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  settingLabel: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500'
+  },
 });

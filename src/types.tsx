@@ -36,3 +36,24 @@ export type UserSettings = {
     darkMode: boolean;
     notificationSchedule: null;
 }
+
+export type ThemeType = {
+    globalBackground: string;
+    background: string;
+    headerBottomBorder: string;
+    cardBorder: string;
+    crosshair: string;
+    shadow: string;
+    label: string;
+    sublabel: string;
+    modalShadow: string;
+    footerBackground: string;
+    footerText: string;
+    minusBorder: string;
+    minusText: string;
+    plusBackground: string;
+    filler: string;
+    separator: string;
+    inputField: string;
+    buttonBorder: string;
+}

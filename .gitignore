@@ -44,3 +44,5 @@ yarn-error.*
 dep_check_script.sh
 fixed_package_json.json
 package.json.backup
+*.todo
+config/

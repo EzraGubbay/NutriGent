@@ -1,6 +1,7 @@
-import { useRef, useEffect, useState } from 'react'
-import { modalStyles } from '@styles'
+import { useRef, useEffect, useState, useMemo } from 'react'
 import { Keyboard, Modal, Text, View, Pressable, Animated, StyleSheet, TextInput, Button, Dimensions, TouchableOpacity } from 'react-native';
+import { useTheme } from '@src/theme/ThemeContext';
+import { ThemeType } from '@types';
 
 interface MealModalProps {
     modalVisible: boolean;
@@ -16,6 +17,10 @@ const { height } = Dimensions.get('window');
 export const AddMealModal: React.FC<MealModalProps> = ({
     modalVisible, setModalVisible, mealLabel, initialText, onClose, onSave
 }) => {
+
+  // Get style theme
+  const { theme } = useTheme();
+  const styles = useMemo(() => getStyles(theme), [theme]);
 
     const animationValue = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
 
@@ -82,35 +87,35 @@ export const AddMealModal: React.FC<MealModalProps> = ({
             }}
         >
             <Animated.View style={[
-                modalStyles.modalCenteredView,
+                styles.modalCenteredView,
                 { opacity: backgroundOpacity }
             ]}>
                 <Pressable style={StyleSheet.absoluteFill} onPress={closeModal}>
                     <Animated.View style={[
-                        modalStyles.modalBackgroundView,
+                        styles.modalBackgroundView,
                         { transform: [{ translateY: contentTranslateY }]}
                     ]}>
-                        <View style={modalStyles.modalBackgroundView}>
-                            <View style={modalStyles.modalView}>
+                        <View style={styles.modalBackgroundView}>
+                            <View style={styles.modalView}>
                                 <Pressable onPress={(e) => e.stopPropagation()}> 
-                                    <Text style={modalStyles.modalTitle}>
+                                    <Text style={styles.modalTitle}>
                                         {mealLabel}
                                     </Text>
                                     <TextInput 
-                                        style={modalStyles.modalInputField}
+                                        style={styles.modalInputField}
                                         placeholder='Enter your meal...'
                                         placeholderTextColor="#A9A9A9"
                                         onChangeText={setMealInputContent}
                                     >{initialText}</TextInput>
-                                    <View style={modalStyles.line} />
-                                    <View style={modalStyles.actionRow}>
-                                        <TouchableOpacity style={modalStyles.actionButton} onPress={handleDelete}>
-                                            <Text style={[modalStyles.actionButtonLabel, { color: "red" }]}>
+                                    <View style={styles.line} />
+                                    <View style={styles.actionRow}>
+                                        <TouchableOpacity style={styles.actionButton} onPress={handleDelete}>
+                                            <Text style={[styles.actionButtonLabel, { color: "red" }]}>
                                                 Delete
                                             </Text>
                                         </TouchableOpacity>
-                                        <TouchableOpacity style={modalStyles.actionButton} onPress={handleSave}>
-                                            <Text style={[modalStyles.actionButtonLabel]}>
+                                        <TouchableOpacity style={styles.actionButton} onPress={handleSave}>
+                                            <Text style={[styles.actionButtonLabel]}>
                                                 Save
                                             </Text>
                                         </TouchableOpacity>
@@ -124,3 +129,72 @@ export const AddMealModal: React.FC<MealModalProps> = ({
         </Modal>
     )
 }
+
+const getStyles = (theme: ThemeType) => StyleSheet.create({
+    modalCenteredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: theme.modalShadow, // Semi-transparent overlay
+    width: "100%"
+  },
+   modalBackgroundView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: "100%",
+   },
+  // Style for the actual modal content box
+  modalView: {
+    margin: 20,
+    backgroundColor: theme.background,
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: theme.shadow,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: '80%',
+  },
+  modalTitle: {
+    margin: 15,
+    paddingVertical: 10,
+    textAlign: 'center',
+    fontSize: 24,
+    fontWeight: "bold",
+    color: theme.label,
+  },
+  modalInputField: {
+    paddingVertical: 10,
+    textAlign: 'left',
+    fontSize: 18,
+    color: theme.label,
+  },
+  line: {
+    height: 2,
+    backgroundColor: theme.separator,
+    marginTop: 5,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: "80%",
+  },
+  actionButton: {
+    flex: 1,
+    height: 20,
+    width: 30,
+    marginLeft: 30,
+    marginTop: 20,
+  },
+  actionButtonLabel: {
+    fontSize: 18,
+    fontWeight: 500,
+    color: theme.crosshair,
+  },
+})

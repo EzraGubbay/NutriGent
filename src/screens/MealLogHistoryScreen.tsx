@@ -1,17 +1,21 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { DrawerNavProps, MealDataCache } from '@types';
-import { styles } from "@styles";
+import { DrawerNavProps, MealDataCache, ThemeType } from '@types';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
-import { loadMealData, saveMealData, genDayPageKeyDates} from "@utils";
+import { loadMealData, saveMealData, genDayPageKeyDates } from "@utils";
 import PagerView from 'react-native-pager-view';
 import { DayPage } from '@components/DayPage';
+import { useTheme } from '@src/theme/ThemeContext';
+import { CARD_MARGIN } from '@src/constants';
 
 const RANGE_LIMIT = 31;
 
 const MealLogHistoryScreen = () => {
+
+    const { theme } = useTheme();
+    const styles = getStyles(theme);
 
     // Navigation Menu
     const navigation = useNavigation<DrawerNavProps>();
@@ -19,9 +23,9 @@ const MealLogHistoryScreen = () => {
         navigation.toggleDrawer();
     }
 
-    const [ drinkCount, updateDrinkCount ] = useState<number>(0);
-    const [ loadedMeals, setLoadedMeals ] = useState<MealDataCache>({});
-    const [ dayPageRefreshToken, setDayPageRefreshToken ] = useState(0);
+    const [drinkCount, updateDrinkCount] = useState<number>(0);
+    const [loadedMeals, setLoadedMeals] = useState<MealDataCache>({});
+    const [dayPageRefreshToken, setDayPageRefreshToken] = useState(0);
 
     const { storageKeys, dates } = genDayPageKeyDates(drinkCount, updateDrinkCount, RANGE_LIMIT);
     const pageRef = useRef<PagerView>(null);
@@ -56,60 +60,75 @@ const MealLogHistoryScreen = () => {
                 pageRef.current?.setPageWithoutAnimation(2);
                 setCurrentPage(2);
             };
-    }, [])
+        }, [])
     ));
 
     return (
         <SafeAreaProvider style={styles.safeArea}>
-                <View style={styles.container}>
-                    <View style={styles.header}>
-                        <Feather name="share-2" size={24} color="#888" />
-                        <Text style={pagerStyle.dateText}>
-                            Meal Log History
-                        </Text>
-                        <TouchableOpacity onPress={toggleDrawer}>
-                            <Feather name="menu" size={28} color="#333" />
-                        </TouchableOpacity>
-                    </View>
-                    <PagerView
-                        style={pagerStyle.pagerView}
-                        initialPage={2}
-                        layoutDirection={'rtl'}
-                        overdrag={true}
-                        ref={pageRef}
-                        onPageSelected={onPageSelected}
-                    >
-                        {storageKeys.map((value, index) => (
-                            <DayPage
-                                key={`${value}-${index}-${dayPageRefreshToken}`}
-                                date={dates[index]}
-                                refreshToken={dayPageRefreshToken}
-                            />
-                        ))}
-                    </PagerView>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Feather name="share-2" size={24} color="#888" />
+                    <Text style={styles.pagerDateText}>
+                        Meal Log History
+                    </Text>
+                    <TouchableOpacity onPress={toggleDrawer}>
+                        <Feather name="menu" size={28} color={theme.label} />
+                    </TouchableOpacity>
                 </View>
+                <PagerView
+                    style={styles.pagerView}
+                    initialPage={2}
+                    layoutDirection={'rtl'}
+                    overdrag={true}
+                    ref={pageRef}
+                    onPageSelected={onPageSelected}
+                >
+                    {storageKeys.map((value, index) => (
+                        <DayPage
+                            key={`${value}-${index}-${dayPageRefreshToken}`}
+                            date={dates[index]}
+                            refreshToken={dayPageRefreshToken}
+                        />
+                    ))}
+                </PagerView>
+            </View>
         </SafeAreaProvider>
     );
 }
 
-const pagerStyle = StyleSheet.create(
-    {
-        pagerView: {
-            flex: 1,
-        },
-        container: {
-            // flex: 1,
-            height: 50,
-            paddingHorizontal: 50,//CARD_MARGIN,
-            // Note: The vertical lines on the side suggest a repeated background image or texture
-            // which cannot be done with simple background color.
-        },
-        dateText: {
-            fontSize: 18,
-            fontWeight: 'bold',
-            marginHorizontal: -100,
-        },
-    }
-);
-
 export default MealLogHistoryScreen;
+
+const getStyles = (theme: ThemeType) => StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: theme.globalBackground,
+        paddingVertical: 40,
+    },
+    container: {
+        flex: 1,
+        paddingHorizontal: CARD_MARGIN,
+        backgroundColor: theme.globalBackground,
+    },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        paddingVertical: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.headerBottomBorder,
+    },
+    pagerView: {
+        flex: 1,
+    },
+    pagerContainer: {
+        height: 50,
+        paddingHorizontal: 50,
+    },
+    pagerDateText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginHorizontal: -100,
+        color: theme.label,
+    }
+})

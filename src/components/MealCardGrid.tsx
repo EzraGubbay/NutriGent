@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react';
-import { View } from 'react-native';
+import { useState, useEffect, useMemo } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { useTheme } from '@src/theme/ThemeContext';
 import { MealCard } from '@components/MealCard';
 import { styles } from '@styles';
-import { Meal } from '@types';
+import { Meal, ThemeType } from '@types';
 import { initialMeals } from '@constants';
 import { AddMealModal } from '@src/components/AddMealModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { CARD_MARGIN } from '@constants';
 
 interface MealCardGridProps {
     storageKey: string;
@@ -13,6 +15,10 @@ interface MealCardGridProps {
 }
 
 export const MealCardGrid: React.FC<MealCardGridProps> = ({ storageKey, refreshToken }) => {
+
+    // Get styling theme
+    const { theme } = useTheme();
+    const styles = useMemo(() => getStyles(theme), [theme]);
 
     const [ data, setData ] = useState<Meal[]>(initialMeals);
 
@@ -85,3 +91,13 @@ export const MealCardGrid: React.FC<MealCardGridProps> = ({ storageKey, refreshT
         </>
     )
 }
+
+const getStyles = (theme: ThemeType) => StyleSheet.create({
+    cardGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap', // Allows cards to wrap to the next line
+    justifyContent: 'space-around', // Distributes cards horizontally
+    paddingTop: 20,
+    paddingHorizontal: CARD_MARGIN - 5,
+  },
+})

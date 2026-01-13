@@ -1,6 +1,15 @@
+import { Dimensions } from 'react-native';
+import { lightTheme } from '@src/theme/styles';
+
 export const MOCK_HEIGHT = 175;
 export const MOCK_GENDER = 'M';
 export const WEIGHT_STORAGE_KEY = '@chart-weightData';
+
+// Styling Constants
+export const { width } = Dimensions.get('window');
+export const GRID_PADDING = 20
+export const CARD_MARGIN = 5
+export const CARD_SIZE = (width - GRID_PADDING - 2 * CARD_MARGIN) / 2;
 
 export const initialMeals = [
     { id: 'breakfast', label: 'Breakfast', content: '' },

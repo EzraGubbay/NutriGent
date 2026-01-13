@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -39,7 +39,13 @@
     },
     "plugins": [
       "expo-notifications",
-      "react-native-health"
+      [
+        "react-native-health",
+        {
+          "shareUsageDescription": "Allow NutriGent to read your daily step count.",
+          "readUsageDescription": "Allow NutriGent to read your daily step count."
+        }
+      ]
     ]
   }
 }

@@ -76,13 +76,15 @@ export const loadWeightData = async (setWeightData: any) => {
     try {
         const jsonValue = await AsyncStorage.getItem(WEIGHT_STORAGE_KEY);
         if (jsonValue) {
-            const parsedData = JSON.parse(jsonValue);
-            // Convert date strings back to Date objects
-            const weightDataWithDates = parsedData.map((weight: any) => ({
-                ...weight,
-                date: new Date(weight.date)
-            }));
-            setWeightData(weightDataWithDates);
+
+            const weights: Weight[] = JSON.parse(jsonValue) as Weight[];
+            weights.map((weight: Weight) => {
+                weight.date = new Date(weight.date);
+            })
+            weights.sort((a: Weight, b: Weight) => {
+                return b.date.getTime() - a.date.getTime();
+            });
+            setWeightData(weights);
         }
         return [];
     } catch(e) {

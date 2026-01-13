@@ -1,12 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
-import { ScrollView, View, Text} from 'react-native';
-import { styles } from '@styles';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import { MealCardGrid } from '@components/MealCardGrid';
 import { DailyData } from '@types';
 import { getDayString, getFormattedDateString } from '@utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { DrinkTracker } from './drinkTracker';
-import { useFocusEffect } from '@react-navigation/native';
+import { DrinkTracker } from '@components/DrinkTracker';
+import { Theme, useFocusEffect } from '@react-navigation/native';
+import { useTheme } from '@src/theme/ThemeContext';
+import { ThemeType } from '@types';
 
 interface DayPageProps {
     date: Date;
@@ -14,6 +15,10 @@ interface DayPageProps {
 }
 
 export const DayPage: React.FC<DayPageProps> = ({ date, refreshToken }) => {
+
+    // Get styling theme
+    const { theme } = useTheme();
+    const styles = useMemo(() => getStyles(theme), [theme]);
 
     const storageDate = `@${getDayString(date)}`
     const storageKey = `${storageDate}-dailyData`;
@@ -51,12 +56,10 @@ export const DayPage: React.FC<DayPageProps> = ({ date, refreshToken }) => {
                 <Text style={styles.dateText}>
                     {formattedDate}
                 </Text>
-                <View style={styles.cardGrid}>
-                    <MealCardGrid
-                        storageKey={data.mealDataStorageKey}
-                        refreshToken={refreshToken}
-                    />
-                </View>
+                <MealCardGrid
+                    storageKey={data.mealDataStorageKey}
+                    refreshToken={refreshToken}
+                />
                 <DrinkTracker
                     storageKey={data.drinkDataStorageKey}
                         refreshToken={refreshToken}
@@ -65,3 +68,17 @@ export const DayPage: React.FC<DayPageProps> = ({ date, refreshToken }) => {
         </ScrollView>
     )
 }
+
+const getStyles = (theme: ThemeType) => StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: theme.globalBackground,
+        paddingVertical: 40,
+    },
+    dateText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginHorizontal: 10,
+        color: theme.label,
+    },
+})
